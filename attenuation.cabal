@@ -1,0 +1,43 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: fcbbf343e8d9bf7e5cded6a8820a9d5419e3ce58615970e6d9dfe8d721e29581
+
+name:           attenuation
+version:        0.1.0.0
+synopsis:       Representational subtyping relations and variance roles.
+description:    This lets you coerce containers (among other things) from stronger types to
+                weaker types with zero runtime cost when it's safe to do so, e.g.
+                @[Fin n] -> [Int]@.  This primarily comes into play when using newtypes to
+                impose additional invariants on existing types.
+category:       Constraints
+homepage:       https://github.com/google/hs-attenuation#readme
+bug-reports:    https://github.com/google/hs-attenuation/issues
+author:         Andrew Pritchard <awpr@google.com>
+maintainer:     Andrew Pritchard <awpr@google.com>
+copyright:      2020-2021 Google LLC
+license:        Apache-2.0
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/google/hs-attenuation
+
+library
+  exposed-modules:
+      Data.Type.Attenuation
+  other-modules:
+      Paths_attenuation
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Werror
+  build-depends:
+      base
+    , profunctors
+  default-language: Haskell2010
