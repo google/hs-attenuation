@@ -12,6 +12,8 @@
 -- See the License for the specific language governing permissions and
 -- limitations under the License.
 
+-- | Representational subtyping relations and variance roles.
+
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DataKinds #-}
@@ -26,7 +28,7 @@ module Data.Type.Attenuation
            Attenuation, attenuate, coercible
          , trans, repr, coer
            -- ** Representationality
-         , Representational, Representational0, Representational1
+         , Representational, Representational0, Representational1, Variance
            -- ** Functor and Contravariant
          , co, contra
            -- ** Bifunctor
@@ -52,22 +54,23 @@ import Unsafe.Coerce (unsafeCoerce)
 
 -- | @Attenuation a b@ is a unidirectional 'Coercion' from @a@ to @b@.
 --
--- This arises from newtypes that impose additional invariants on their
--- representations: if we define @Fin :: Nat -> Type@ as a newtype over 'Int',
--- then it's safe to 'coerce' @Fin@s to 'Int's, and @Fin@s to other @Fin@s with
--- smaller @Nat@ parameters, but not vice versa.
---
 -- "Attenuate: reduce the force, effect, or value of."  An @Attenuation@ takes
 -- a stronger, stricter type to a weaker, more lax type.  It's meant to sound a
 -- bit like 'Coercion', while conveying that it weakens the type of its
 -- argument.
 --
+-- This arises from newtypes that impose additional invariants on their
+-- representations: if we define @Fin :: Nat -> Type@ as a newtype over 'Int',
+-- such as in <https://hackage.haskell.org/package/fin-int fin-int>, then it's
+-- safe to 'coerce' @Fin@s to 'Int's, and @Fin@s to other @Fin@s with smaller
+-- @Nat@ parameters, but not vice versa.
+--
 -- Within the module defining this @Fin@ type, we can obtain 'Coercible'
--- between any two 'Fin' types regardless of their roles, because their newtype
+-- between any two @Fin@ types regardless of their roles, because their newtype
 -- constructors are in scope, but if we've taken appropriate precautions
 -- (namely not exporting the constructor), we can't obtain it outside the
 -- module.  We can relax this and make the coercion "opt-in" by exporting it in
--- the form of a 'Coercion' with a scary name like 'unsafeCoFin', but this is
+-- the form of a 'Coercion' with a scary name like @unsafeCoFin@, but this is
 -- still error-prone.
 --
 -- Instead, we introduce a newtype wrapper around 'Coercion' which restricts it
@@ -98,7 +101,7 @@ attenuate (Attenuation Coercion) = coerce
 coercible :: Coercible a b => Attenuation a b
 coercible = Attenuation Coercion
 
--- | Composes two 'Attenuation's.  See also the 'Category' instance.
+-- | Transitivity of 'Attenuation's.  See also the 'Category' instance.
 trans :: Attenuation a b -> Attenuation b c -> Attenuation a c
 trans (Attenuation coAB) (Attenuation coBC) =
   Attenuation (Coercion.trans coAB coBC)
@@ -185,22 +188,46 @@ sndco (Attenuation c) = Attenuation (rep c)
 
 -- | Lift an 'Attenuation' covariantly over the left of a 'Profunctor'.
 --
--- Similarly to 'co1', we use 'Profunctor' to guarantee contravariance in the
--- appropriate parameter.
+-- Similarly to the use of 'Functor' in 'co', we use 'Profunctor' to guarantee
+-- contravariance in the appropriate parameter.
 lcontra :: (Profunctor p, Representational0 p) => Variance (p b x) (p a x) a b
 lcontra (Attenuation c) = Attenuation (sym $ rep0 c)
 
 -- | Lift an 'Attenuation' covariantly over the right of a 'Profunctor'.
 --
--- Similarly to 'co1', we use 'Profunctor' to guarantee contravariance in the
--- appropriate parameter.
+-- Similarly to the use of 'Functor' in 'co', we use 'Profunctor' to guarantee
+-- contravariance in the appropriate parameter.
 rco :: (Profunctor p, Representational1 p) => Variance (p x a) (p x b) a b
 rco (Attenuation c) = Attenuation (rep c)
 
+-- | 'Attenuation' of 'Void' to any type.
+--
+-- If you have 'Void' appearing covariantly in a type, you can replace it with
+-- any other lifted type with a coercion, because the value can't contain any
+-- non-bottom 'Void' values (there are none), and any value that /is/ bottom
+-- can "work" (i.e. throw or fail to terminate) just as well at any other
+-- lifted type.
+--
+-- For example, if you have a @[Doc Void]@ (from
+-- <https://hackage.haskell.org/package/pretty pretty>), you know it doesn't
+-- have any annotations (or they're errors), so you can use it as @[Doc a]@
+-- without actually traversing the list and @Doc@ structure to apply
+-- 'Data.Void.absurd' to all of the 'Void's.
+--
+-- The implementation looks potentially sketchy (I'm not sure nothing can go
+-- wrong when GHC encounters 'unsafeCoerce' inside a 'Coercion'), but it seems
+-- to work in practice.
 attVoid :: Attenuation Void a
 attVoid =
   Attenuation (unsafeCoerce (Coercion :: Coercion a a) :: Coercion Void a)
 
+-- | 'Attenuation' of any type to 'Any'.
+--
+-- Similarly to 'attVoid', you can weaken any type to 'Any' for free, since any
+-- value is a valid value of type 'Any'.
+--
+-- This looks similarly sketchy to 'attVoid' in that it builds a bad 'Coercion'
+-- internally.
 attAny :: Attenuation a Any
 attAny =
   Attenuation (unsafeCoerce (Coercion :: Coercion a a) :: Coercion a Any)
