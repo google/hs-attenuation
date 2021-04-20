@@ -20,6 +20,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE QuantifiedConstraints #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 
@@ -50,7 +51,12 @@ import qualified Data.Type.Coercion as Coercion
 import Data.Type.Equality ((:~:)(..))
 import Data.Void (Void)
 import GHC.Exts (Any)
+
+#if MIN_VERSION_base(4,15,0)
+import Unsafe.Coerce (unsafeEqualityProof, UnsafeEquality(..))
+#else
 import Unsafe.Coerce (unsafeCoerce)
+#endif
 
 -- | @Attenuation a b@ is a unidirectional 'Coercion' from @a@ to @b@.
 --
@@ -213,21 +219,22 @@ rco (Attenuation c) = Attenuation (rep c)
 -- have any annotations (or they're errors), so you can use it as @[Doc a]@
 -- without actually traversing the list and @Doc@ structure to apply
 -- 'Data.Void.absurd' to all of the 'Void's.
---
--- The implementation looks potentially sketchy (I'm not sure nothing can go
--- wrong when GHC encounters 'unsafeCoerce' inside a 'Coercion'), but it seems
--- to work in practice.
-attVoid :: Attenuation Void a
-attVoid =
-  Attenuation (unsafeCoerce (Coercion :: Coercion a a) :: Coercion Void a)
+attVoid :: forall a. Attenuation Void a
+attVoid = Attenuation $
+#if MIN_VERSION_base(4,15,0)
+  case unsafeEqualityProof :: UnsafeEquality a Void of UnsafeRefl -> Coercion
+#else
+  (unsafeCoerce (Coercion :: Coercion a a) :: Coercion Void a)
+#endif
 
 -- | 'Attenuation' of any type to 'Any'.
 --
 -- Similarly to 'attVoid', you can weaken any type to 'Any' for free, since any
 -- value is a valid value of type 'Any'.
---
--- This looks similarly sketchy to 'attVoid' in that it builds a bad 'Coercion'
--- internally.
-attAny :: Attenuation a Any
-attAny =
-  Attenuation (unsafeCoerce (Coercion :: Coercion a a) :: Coercion a Any)
+attAny :: forall a. Attenuation a Any
+attAny = Attenuation $
+#if MIN_VERSION_base(4,15,0)
+  case unsafeEqualityProof :: UnsafeEquality a Any of UnsafeRefl -> Coercion
+#else
+  (unsafeCoerce (Coercion :: Coercion a a) :: Coercion a Any)
+#endif
