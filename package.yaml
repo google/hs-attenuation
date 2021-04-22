@@ -31,8 +31,6 @@ github: google/hs-attenuation
 extra-source-files:
   CHANGELOG.md
 
-ghc-options: -Wall -Werror
-
 dependencies:
   - base >= 4.7 && < 4.16
   - profunctors >= 0.1 && < 5.7

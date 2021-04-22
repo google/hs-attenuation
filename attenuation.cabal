@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 544ced1f188db0f805adc902cbee9ef79bc2e526a58d88045286aa9934b13af3
+-- hash: 92d47a2950ec019ac542be7970e219dab7309ba103c1c46acae9beb21fef6f06
 
 name:           attenuation
 version:        0.1.0.0
@@ -36,7 +36,6 @@ library
       Paths_attenuation
   hs-source-dirs:
       src
-  ghc-options: -Wall -Werror
   build-depends:
       base >=4.7 && <4.16
     , profunctors >=0.1 && <5.7
