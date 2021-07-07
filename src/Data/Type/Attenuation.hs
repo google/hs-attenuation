@@ -68,7 +68,7 @@ import Unsafe.Coerce (unsafeCoerce)
 -- This arises from newtypes that impose additional invariants on their
 -- representations: if we define @Fin :: Nat -> Type@ as a newtype over 'Int',
 -- such as in <https://hackage.haskell.org/package/fin-int fin-int>, then it's
--- safe to 'coerce' @Fin@s to 'Int's, and @Fin@s to other @Fin@s with smaller
+-- safe to 'coerce' @Fin@s to 'Int's, and @Fin@s to other @Fin@s with larger
 -- @Nat@ parameters, but not vice versa.
 --
 -- Within the module defining this @Fin@ type, we can obtain 'Coercible'
@@ -122,6 +122,9 @@ coer = Attenuation
 
 -- | A witness that @a@ occurs representationally in @s@ and that, when
 -- substituting it for @b@, you get @t@.
+--
+-- These compose like Lenses from the "lens" package, so you can e.g. lift
+-- 'Attenuation's through several @Functor@s by @'co'.co.co $ x@.
 type Variance s t a b = Attenuation a b -> Attenuation s t
 
 -- | A constraint that behaves like @type role f representational@.
@@ -189,6 +192,10 @@ fstco (Attenuation c) = Attenuation (rep0 c)
 -- commonly-used class for functors over the last-but-one parameter, we use
 -- 'Bifunctor'.  Sadly, this rules out types which are covariant in parameter
 -- -1 and contravariant in parameter -0.
+--
+-- Note that any particular type with a @Bifunctor f@ instance should also have
+-- @Functor (f x)@, so 'co' should work on any type that 'sndco' works on, but
+-- in polymorphic contexts, the 'Functor' instance may not be available.
 sndco :: (Bifunctor f, Representational1 f) => Variance (f x a) (f x b) a b
 sndco (Attenuation c) = Attenuation (rep c)
 
@@ -203,6 +210,9 @@ lcontra (Attenuation c) = Attenuation (sym $ rep0 c)
 --
 -- Similarly to the use of 'Functor' in 'co', we use 'Profunctor' to guarantee
 -- contravariance in the appropriate parameter.
+--
+-- As with 'sndco', this functions the same as 'co', but the needed 'Functor'
+-- instance might not be available in polymorphic contexts.
 rco :: (Profunctor p, Representational1 p) => Variance (p x a) (p x b) a b
 rco (Attenuation c) = Attenuation (rep c)
 
