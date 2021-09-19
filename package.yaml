@@ -39,3 +39,7 @@ library:
   source-dirs: src
   exposed-modules:
     - Data.Type.Attenuation
+
+  when:
+    condition: false
+    other-modules: Paths_attenuation

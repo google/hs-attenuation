@@ -1,10 +1,10 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.33.0.
+-- This file has been generated from package.yaml by hpack version 0.34.4.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 994a8bc15a41d32b35121509e2933242ba582afb85761598a6587ed7dc89dc11
+-- hash: cf227a9cc46c743315ca26c687ba2ee04760d04de036aeba4a3067afc72934cb
 
 name:           attenuation
 version:        0.1.0.0
@@ -32,8 +32,6 @@ source-repository head
 library
   exposed-modules:
       Data.Type.Attenuation
-  other-modules:
-      Paths_attenuation
   hs-source-dirs:
       src
   build-depends:
