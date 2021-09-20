@@ -2,9 +2,17 @@
 
 Uni-directional coercions, or representational subtyping relations.
 
+[![Stack CI](https://github.com/google/hs-attenuation/actions/workflows/stack-ci.yml/badge.svg)](https://github.com/google/hs-attenuation/actions/workflows/stack-ci.yml)
+
 ## Disclaimer
 
 This is not an officially supported Google product.
+
+## Hackage Status
+
+* [![attenuation](https://badgen.net/runkit/awpr/hackage/v/attenuation?icon=haskell&cache=600)](https://hackage.haskell.org/package/attenuation)
+  ![Uploaded](https://badgen.net/runkit/awpr/hackage/t/attenuation?cache=600)
+  ![Haddock](https://badgen.net/runkit/awpr/hackage/d/attenuation?cache=600)
 
 ## Overview
 
