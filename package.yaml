@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: attenuation
-version: 0.1.0.0
+version: 0.2.0
 category: Constraints
 synopsis: Representational subtyping relations and variance roles.
 description: |
@@ -33,12 +33,16 @@ extra-source-files:
 
 dependencies:
   - base >= 4.12 && < 4.16
+  - constraints >= 0.11 && < 0.14
   - profunctors >= 0.1 && < 5.7
 
 library:
   source-dirs: src
   exposed-modules:
     - Data.Type.Attenuation
+    - Data.Type.Attenuation.Unsafe
+  other-modules:
+    - Data.Type.Attenuation.Internal
 
   when:
     condition: false

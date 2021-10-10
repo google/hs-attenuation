@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: cf227a9cc46c743315ca26c687ba2ee04760d04de036aeba4a3067afc72934cb
+-- hash: e1992d1fe8e9b29a8bc59c532d6fa301367b0562a573eb89a529f425b8872343
 
 name:           attenuation
-version:        0.1.0.0
+version:        0.2.0
 synopsis:       Representational subtyping relations and variance roles.
 description:    This lets you coerce containers (among other things) from stronger types to
                 weaker types with zero runtime cost when it's safe to do so, e.g.
@@ -32,9 +32,13 @@ source-repository head
 library
   exposed-modules:
       Data.Type.Attenuation
+      Data.Type.Attenuation.Unsafe
+  other-modules:
+      Data.Type.Attenuation.Internal
   hs-source-dirs:
       src
   build-depends:
       base >=4.12 && <4.16
+    , constraints >=0.11 && <0.14
     , profunctors >=0.1 && <5.7
   default-language: Haskell2010
