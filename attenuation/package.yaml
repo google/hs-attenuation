@@ -25,7 +25,7 @@ license: Apache-2.0
 author: Andrew Pritchard <awpr@google.com>
 copyright: 2020-2021 Google LLC
 maintainer: Andrew Pritchard <awpr@google.com>
-github: google/hs-attenuation
+github: google/hs-attenuation/attenuation
 
 # Note: this causes CHANGELOG.md to be included in Hackage distributions.
 extra-source-files:
