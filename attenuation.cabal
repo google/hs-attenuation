@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e1992d1fe8e9b29a8bc59c532d6fa301367b0562a573eb89a529f425b8872343
+-- hash: fdf59a5db391b60d4ae1881fc2c3946f7cda16e5467e9b9b8e5f278dd8fc3feb
 
 name:           attenuation
 version:        0.2.0
@@ -39,6 +39,6 @@ library
       src
   build-depends:
       base >=4.12 && <4.16
-    , constraints >=0.11 && <0.14
+    , constraints >=0.10 && <0.14
     , profunctors >=0.1 && <5.7
   default-language: Haskell2010

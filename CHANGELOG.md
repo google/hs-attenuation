@@ -9,5 +9,5 @@ complete accounting.
 * Add an `Attenuable` class that does a decent job of deriving `Attenuation`s.
 * Add a new `attenuate` that uses `Attenuable`.
 * Add a `Data.Attenuation.Unsafe` module giving access to the internals.
-* Add `HasDict` for `Attenuation`.
+* Add `HasDict` for `Attenuation` (with new enough `constraints`).
 * Add `:-` entailments corresponding to pseudo-instances of `Attenuable`.

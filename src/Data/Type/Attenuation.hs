@@ -60,7 +60,7 @@ import Data.Type.Equality ((:~:)(..), gcastWith)
 import Data.Void (Void)
 import GHC.Exts (Any)
 
-import Data.Constraint ((:-)(Sub), Dict(..), withDict)
+import Data.Constraint ((:-)(Sub), Dict(..))
 import Data.Profunctor (Profunctor)
 
 #if MIN_VERSION_base(4,15,0)
@@ -147,13 +147,6 @@ type (⊆) = Attenuable
 -- | Coerce from a representational subtype @a@ to its supertype @b@.
 attenuate :: Attenuable a b => a -> b
 attenuate = attenuateWith attenuation
-
--- | Lift an 'Attenuation' to a constraint within a subexpression.
---
--- This is just specialization of 'withDict'; consider using that or
--- 'Data.Constraint.\\'.
-withAttenuation :: Attenuation a b -> (Attenuable a b => r) -> r
-withAttenuation = withDict
 
 -- Type inference aid for use in entailments: otherwise it's ambiguous what
 -- 'Attenuation' we want to promote with 'withAttenuation'.

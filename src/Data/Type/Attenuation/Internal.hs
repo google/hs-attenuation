@@ -14,6 +14,7 @@
 
 {-# OPTIONS_HADDOCK not-home #-}
 
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -30,6 +31,7 @@ module Data.Type.Attenuation.Internal
          ( Attenuation(..), Attenuable(..)
          , Variance, Representational, Representational0, Representational1
          , refl, trans, co, fstco, sndco, lcontra, rco, rep, rep0
+         , withAttenuation
          ) where
 
 import Prelude hiding ((.))
@@ -41,7 +43,9 @@ import Data.Kind (Constraint, Type)
 import Data.Type.Coercion (Coercion(..), sym)
 import qualified Data.Type.Coercion as Coercion
 
+#if MIN_VERSION_constraints(0, 11, 0)
 import Data.Constraint (Dict(..), HasDict(..))
+#endif
 import Data.Profunctor (Profunctor)
 
 -- | A constraint that behaves like @type role f representational@.
@@ -168,6 +172,13 @@ lcontra (Attenuation c) = Attenuation (sym $ rep0 c)
 rco :: (Profunctor p, Representational1 p) => Variance (p x a) (p x b) a b
 rco (Attenuation c) = Attenuation (rep c)
 
+-- | Lift an 'Attenuation' to a constraint within a subexpression.
+--
+-- This is just specialization of 'withDict'; consider using that or
+-- 'Data.Constraint.\\'.
+withAttenuation :: Attenuation a b -> (Attenuable a b => r) -> r
+withAttenuation (Attenuation Coercion) r = r
+
 -- If all else fails, we can promote a Coercible instance.  Since this is
 -- less-specific than any sensible instance and is overlappable, it'll never be
 -- selected if we have any other option, so we won't incur Coercible
@@ -180,6 +191,7 @@ instance {-# INCOHERENT #-} Coercible a b => Attenuable a b
 -- introduce 'Representational' constraints that we don't actually need.
 instance {-# INCOHERENT #-} Attenuable (a :: Type) a
 
+#if MIN_VERSION_constraints(0, 11, 0)
 instance HasDict (Attenuable a b) (Attenuation a b) where
   -- Some fairly neat trickery here: because we have the (incoherent) instance
   -- that demotes Coercible to Attenuable, and because Attenuation internally
@@ -187,7 +199,8 @@ instance HasDict (Attenuable a b) (Attenuation a b) where
   -- Coercible instance, we can actually just unwrap everything (unsafely) to
   -- reify an Attenuation back to an Attenuable instance without making any
   -- assumptions about the representation of the Attenuable dictionary.
-  evidence (Attenuation Coercion) = Dict
+  evidence = (`withAttenuation` Dict)
+#endif
 
 -- Any covariant functor with representational role for its parameter is
 -- representationally covariant.
