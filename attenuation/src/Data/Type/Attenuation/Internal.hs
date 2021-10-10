@@ -30,7 +30,7 @@
 module Data.Type.Attenuation.Internal
          ( Attenuation(..), Attenuable(..)
          , Variance, Representational, Representational0, Representational1
-         , refl, trans, co, fstco, sndco, lcontra, rco, rep, rep0
+         , refl, trans, co, fstco, sndco, domain, codomain, rep, rep0
          , withAttenuation
          ) where
 
@@ -46,7 +46,6 @@ import qualified Data.Type.Coercion as Coercion
 #if MIN_VERSION_constraints(0, 11, 0)
 import Data.Constraint (Dict(..), HasDict(..))
 #endif
-import Data.Profunctor (Profunctor)
 
 -- | A constraint that behaves like @type role f representational@.
 --
@@ -155,22 +154,15 @@ fstco (Attenuation c) = Attenuation (rep0 c)
 sndco :: (Bifunctor f, Representational1 f) => Variance (f x a) (f x b) a b
 sndco (Attenuation c) = Attenuation (rep c)
 
--- | Lift an 'Attenuation' covariantly over the left of a 'Profunctor'.
---
--- Similarly to the use of 'Functor' in 'co', we use 'Profunctor' to guarantee
--- contravariance in the appropriate parameter.
-lcontra :: (Profunctor p, Representational0 p) => Variance (p b x) (p a x) a b
-lcontra (Attenuation c) = Attenuation (sym $ rep0 c)
+-- | Lift an 'Attenuation' covariantly over the argument of a functiwon.
+domain :: Variance (b -> x) (a -> x) a b
+domain (Attenuation c) = Attenuation (sym $ rep0 c)
 
--- | Lift an 'Attenuation' covariantly over the right of a 'Profunctor'.
+-- | Lift an 'Attenuation' covariantly over the result of a function.
 --
--- Similarly to the use of 'Functor' in 'co', we use 'Profunctor' to guarantee
--- contravariance in the appropriate parameter.
---
--- As with 'sndco', this functions the same as 'co', but the needed 'Functor'
--- instance might not be available in polymorphic contexts.
-rco :: (Profunctor p, Representational1 p) => Variance (p x a) (p x b) a b
-rco (Attenuation c) = Attenuation (rep c)
+-- This is just a specialization of 'co'.
+codomain :: Variance (x -> a) (x -> b) a b
+codomain (Attenuation c) = Attenuation (rep c)
 
 -- | Lift an 'Attenuation' to a constraint within a subexpression.
 --
@@ -241,7 +233,7 @@ instance {-# INCOHERENT #-}
 
 instance (Attenuable c a, Attenuable b d)
       => Attenuable (a -> b) (c -> d) where
-  attenuation = lcontra attenuation . rco attenuation
+  attenuation = domain attenuation . codomain attenuation
 
 instance (Attenuable a a', Attenuable b b')
       => Attenuable (a, b) (a', b') where

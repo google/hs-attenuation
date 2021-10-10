@@ -12,20 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: attenuation
-version: 0.2.0
+name: attenuation-profunctors
+version: 0.1.0
 category: Constraints
-synopsis: Representational subtyping relations and variance roles.
+synopsis: Attenuation support for @profunctors@.
 description: |
-  This lets you coerce containers (among other things) from stronger types to
-  weaker types with zero runtime cost when it's safe to do so, e.g.
-  @[Fin n] -> [Int]@.  This primarily comes into play when using newtypes to
-  impose additional invariants on existing types.
+  This provides functions and @Attenuation@s for @profunctors@.  See the
+  <<#readme README.md>>.
 license: Apache-2.0
 author: Andrew Pritchard <awpr@google.com>
 copyright: 2020-2021 Google LLC
 maintainer: Andrew Pritchard <awpr@google.com>
-github: google/hs-attenuation/attenuation
+github: google/hs-attenuation/attenuation-profunctors
 
 # Note: this causes CHANGELOG.md to be included in Hackage distributions.
 extra-source-files:
@@ -33,16 +31,15 @@ extra-source-files:
 
 dependencies:
   - base >= 4.12 && < 4.16
+  - attenuation >= 0.1 && < 0.3
   - constraints >= 0.10 && < 0.14
+  - profunctors >= 0.1 && < 5.7
 
 library:
   source-dirs: src
   exposed-modules:
-    - Data.Type.Attenuation
-    - Data.Type.Attenuation.Unsafe
-    - Data.Type.Attenuation.Internal
-  other-modules: []
+    - Data.Type.Attenuation.Profunctor
 
   when:
     condition: false
-    other-modules: Paths_attenuation
+    other-modules: Paths_attenuation_profunctors

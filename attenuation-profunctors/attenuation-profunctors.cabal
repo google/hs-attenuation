@@ -4,13 +4,11 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           attenuation
-version:        0.2.0
-synopsis:       Representational subtyping relations and variance roles.
-description:    This lets you coerce containers (among other things) from stronger types to
-                weaker types with zero runtime cost when it's safe to do so, e.g.
-                @[Fin n] -> [Int]@.  This primarily comes into play when using newtypes to
-                impose additional invariants on existing types.
+name:           attenuation-profunctors
+version:        0.1.0
+synopsis:       Attenuation support for @profunctors@.
+description:    This provides functions and @Attenuation@s for @profunctors@.  See the
+                <<#readme README.md>>.
 category:       Constraints
 homepage:       https://github.com/google/hs-attenuation#readme
 bug-reports:    https://github.com/google/hs-attenuation/issues
@@ -26,16 +24,16 @@ extra-source-files:
 source-repository head
   type: git
   location: https://github.com/google/hs-attenuation
-  subdir: attenuation
+  subdir: attenuation-profunctors
 
 library
   exposed-modules:
-      Data.Type.Attenuation
-      Data.Type.Attenuation.Unsafe
-      Data.Type.Attenuation.Internal
+      Data.Type.Attenuation.Profunctor
   hs-source-dirs:
       src
   build-depends:
-      base >=4.12 && <4.16
+      attenuation >=0.1 && <0.3
+    , base >=4.12 && <4.16
     , constraints >=0.10 && <0.14
+    , profunctors >=0.1 && <5.7
   default-language: Haskell2010

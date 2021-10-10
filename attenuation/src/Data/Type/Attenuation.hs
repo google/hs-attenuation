@@ -39,15 +39,15 @@ module Data.Type.Attenuation
          , co, contra
            -- ** Bifunctor
          , fstco, sndco
-           -- ** Profunctor
-         , lcontra, rco
+           -- ** (->)
+         , domain, codomain
            -- ** Initial and Final Objects
          , attVoid, attAny
            -- * Attenuable
          , Attenuable(..), type (⊆), attenuate
          , withAttenuation
            -- ** Entailments
-         , contravariance, profunctoriality, transitivity
+         , contravariance, transitivity
          ) where
 
 import Prelude hiding ((.))
@@ -61,7 +61,6 @@ import Data.Void (Void)
 import GHC.Exts (Any)
 
 import Data.Constraint ((:-)(Sub), Dict(..))
-import Data.Profunctor (Profunctor)
 
 #if MIN_VERSION_base(4,15,0)
 import Unsafe.Coerce (unsafeEqualityProof, UnsafeEquality(..))
@@ -159,13 +158,6 @@ contravariance
    . (Representational f, Contravariant f)
   => Attenuable a b :- Attenuable (f b) (f a)
 contravariance = Sub (toDict (contra attenuation))
-
--- | 'Profunctor's functors map attenuations profunctorially.
-profunctoriality
-  :: forall p a b c d
-   . (Representational0 p, Representational1 p, Profunctor p)
-  => (Attenuable a c, Attenuable b d) :- Attenuable (p c b) (p a d)
-profunctoriality = Sub (toDict (rco attenuation . lcontra attenuation))
 
 -- | 'Attenuation's are transitive.
 transitivity
