@@ -15,10 +15,10 @@
 name: attenuation-profunctors
 version: 0.1.0
 category: Constraints
-synopsis: Attenuation support for @profunctors@.
+synopsis: Attenuation support for Profunctors.
 description: |
   This provides functions and @Attenuation@s for @profunctors@.  See the
-  <<#readme README.md>>.
+  <#readme README.md>.
 license: Apache-2.0
 author: Andrew Pritchard <awpr@google.com>
 copyright: 2020-2021 Google LLC

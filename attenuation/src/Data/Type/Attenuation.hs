@@ -140,7 +140,7 @@ attAny = Attenuation $
   (unsafeCoerce (Coercion :: Coercion a a) :: Coercion a Any)
 #endif
 
--- | An operator form of 'Attenuable', by analogy to @(~)@.
+-- | An operator form of 'Attenuable'.
 type (⊆) = Attenuable
 
 -- | Coerce from a representational subtype @a@ to its supertype @b@.

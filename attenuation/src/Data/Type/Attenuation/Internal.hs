@@ -170,7 +170,7 @@ codomain (Attenuation c) = Attenuation (rep c)
 -- | Lift an 'Attenuation' to a constraint within a subexpression.
 --
 -- This is just specialization of 'Data.Constraint.withDict'; consider using
--- that or 'Data.Constraint.\\'.
+-- that or ('Data.Constraint.\\').
 withAttenuation :: Attenuation a b -> (Attenuable a b => r) -> r
 -- Some fairly neat trickery here: because we have the (incoherent) instance
 -- that demotes Coercible to Attenuable, and because Attenuation internally
@@ -279,11 +279,19 @@ instance Category Attenuation where
 --
 -- The word "satisfiable" in the first paragraph is chosen carefully: not all
 -- instances that are satisfiable will be solved automatically by GHC.  One can
--- obtain 'Attenuable' instances by 'Data.Constraint.\\' or by an entailment
+-- obtain 'Attenuable' instances by ('Data.Constraint.\\') or by an entailment
 -- ('Data.Constraint.:-'), for some types that wouldn't be solved by any of the
 -- "real" instances.  In particular, this is useful for compositions of
 -- attenuations and for lifting attenuations across
 -- 'Data.Functor.Contravariant.Contravariant's and @Profunctor@s.
+--
+-- Since the most common case of writing 'Attenuable' instances is for newtypes
+-- defined in the present module, a default implementation is provided that
+-- uses 'Coercible'.  So, you can write empty instances to make the 'Coercion'
+-- implied by the newtype constructor available in only one direction.  In this
+-- case, take care not to export the newtype constructor, and be sure to
+-- double-check role annotations!  Otherwise, the type might be 'Coercible' in
+-- ways you didn't intend.
 class Attenuable a b where
   attenuation :: Attenuation a b
   default attenuation :: Coercible a b => Attenuation a b

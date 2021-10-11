@@ -6,9 +6,9 @@ cabal-version: 1.12
 
 name:           attenuation-profunctors
 version:        0.1.0
-synopsis:       Attenuation support for @profunctors@.
+synopsis:       Attenuation support for Profunctors.
 description:    This provides functions and @Attenuation@s for @profunctors@.  See the
-                <<#readme README.md>>.
+                <#readme README.md>.
 category:       Constraints
 homepage:       https://github.com/google/hs-attenuation#readme
 bug-reports:    https://github.com/google/hs-attenuation/issues
