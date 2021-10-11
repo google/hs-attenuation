@@ -15,7 +15,7 @@
 name: attenuation-profunctors
 version: 0.1.0
 category: Constraints
-synopsis: Attenuation support for Profunctors.
+synopsis: Attenuation support for Profunctors
 description: |
   This provides functions and @Attenuation@s for @profunctors@.  See the
   <#readme README.md>.
