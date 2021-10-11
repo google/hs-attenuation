@@ -37,17 +37,18 @@ import Data.Type.Attenuation
 import Data.Type.Attenuation.Internal (Attenuation(..), rep0, rep)
 import Data.Type.Coercion (sym)
 
--- | Lift an 'Attenuation' covariantly over the left of a 'Profunctor'.
+-- | Lift an 'Attenuation' contravariantly over the left of a 'Profunctor'.
 --
--- Similarly to the use of 'Functor' in 'Data.Type.Attenuation.co', we use
--- 'Profunctor' to guarantee contravariance in the appropriate parameter.
+-- Similarly to the use of 'Data.Functor.Contravariant.Contravariant' in
+-- 'Data.Type.Attenuation.contra', we use 'Profunctor' to guarantee
+-- contravariance in the appropriate parameter.
 lcontra :: (Profunctor p, Representational0 p) => Variance (p b x) (p a x) a b
 lcontra (Attenuation c) = coer (sym $ rep0 c)
 
 -- | Lift an 'Attenuation' covariantly over the right of a 'Profunctor'.
 --
 -- Similarly to the use of 'Functor' in 'Data.Type.Attenuation.co', we use
--- 'Profunctor' to guarantee contravariance in the appropriate parameter.
+-- 'Profunctor' to guarantee covariance in the appropriate parameter.
 --
 -- As with 'Data.Type.Attenuation.sndco', this functions the same as
 -- 'Data.Type.Attenuation.co', but the needed 'Functor' instance might not be
