@@ -32,7 +32,7 @@ library
   hs-source-dirs:
       src
   build-depends:
-      attenuation >=0.1 && <0.3
+      attenuation ==0.2.*
     , base >=4.12 && <4.16
     , constraints >=0.10 && <0.14
     , profunctors >=0.1 && <5.7
