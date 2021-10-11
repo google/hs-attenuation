@@ -1,8 +1,3 @@
-# 0.1.0.0
-
-Added everything that exists in this version.  See Haddock documentation for a
-complete accounting.
-
 # 0.2.0
 
 * Rename `attenuate` to `attenuateWith` (breaking change).
@@ -12,3 +7,8 @@ complete accounting.
 * Add a `Data.Attenuation.Unsafe` module giving access to the internals.
 * Add `HasDict` for `Attenuation` (with new enough `constraints`).
 * Add `:-` entailments corresponding to pseudo-instances of `Attenuable`.
+
+# 0.1.0.0
+
+Added everything that exists in this version.  See Haddock documentation for a
+complete accounting.
