@@ -27,6 +27,13 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE UndecidableInstances #-}
 
+-- | Internal implementation details of @attenuation@.
+--
+-- Prefer "Data.Type.Attenuation" and "Data.Type.Attenuation.Unsafe" instead
+-- whenever possible.  This exports the constructor of 'Attenuation', which is
+-- much easier to misuse by accident than
+-- 'Data.Type.Attenuation.Unsafe.unsafeToCoercion'.
+
 module Data.Type.Attenuation.Internal
          ( Attenuation(..), Attenuable(..)
          , Variance, Representational, Representational0, Representational1
@@ -109,11 +116,7 @@ rep0 Coercion = Coercion
 --
 -- @Attenuation a b@ can be seen as a witness that @a@ is, semantically and
 -- representationally, a subtype of @b@: that is, any runtime object that
--- inhabits @a@ also inhabits @b@ without any conversion.  Note, however, that
--- we can't have a useful typeclass of this subtyping relation because all of
--- its instances would have to be specified individually: whereas 'Coercible'
--- is willing to invert or compose coercions implicitly because of GHC magic, a
--- subtyping class would not have that affordance.
+-- inhabits @a@ also inhabits @b@ without any conversion.
 newtype Attenuation a b = Attenuation (Coercion a b)
   deriving (Eq, Ord, Show)
 
@@ -154,7 +157,7 @@ fstco (Attenuation c) = Attenuation (rep0 c)
 sndco :: (Bifunctor f, Representational1 f) => Variance (f x a) (f x b) a b
 sndco (Attenuation c) = Attenuation (rep c)
 
--- | Lift an 'Attenuation' covariantly over the argument of a functiwon.
+-- | Lift an 'Attenuation' contravariantly over the argument of a functiwon.
 domain :: Variance (b -> x) (a -> x) a b
 domain (Attenuation c) = Attenuation (sym $ rep0 c)
 
@@ -166,9 +169,15 @@ codomain (Attenuation c) = Attenuation (rep c)
 
 -- | Lift an 'Attenuation' to a constraint within a subexpression.
 --
--- This is just specialization of 'withDict'; consider using that or
--- 'Data.Constraint.\\'.
+-- This is just specialization of 'Data.Constraint.withDict'; consider using
+-- that or 'Data.Constraint.\\'.
 withAttenuation :: Attenuation a b -> (Attenuable a b => r) -> r
+-- Some fairly neat trickery here: because we have the (incoherent) instance
+-- that demotes Coercible to Attenuable, and because Attenuation internally
+-- just holds a Coercion, which in turn is just a GADT constructor holding a
+-- Coercible instance, we can actually just unwrap everything (unsafely) to
+-- reify an Attenuation back to an Attenuable instance without making any
+-- assumptions about the representation of the Attenuable dictionary.
 withAttenuation (Attenuation Coercion) r = r
 
 -- If all else fails, we can promote a Coercible instance.  Since this is
@@ -185,12 +194,6 @@ instance {-# INCOHERENT #-} Attenuable (a :: Type) a
 
 #if MIN_VERSION_constraints(0, 11, 0)
 instance HasDict (Attenuable a b) (Attenuation a b) where
-  -- Some fairly neat trickery here: because we have the (incoherent) instance
-  -- that demotes Coercible to Attenuable, and because Attenuation internally
-  -- just holds a Coercion, which in turn is just a GADT constructor holding a
-  -- Coercible instance, we can actually just unwrap everything (unsafely) to
-  -- reify an Attenuation back to an Attenuable instance without making any
-  -- assumptions about the representation of the Attenuable dictionary.
   evidence = (`withAttenuation` Dict)
 #endif
 
@@ -215,7 +218,7 @@ instance {-# INCOHERENT #-} (Functor f, Representational f, Attenuable x y)
 -- Similarly to the 'Functor' instance, this assumes by default that binary
 -- type constructors should be 'Bifunctor's.
 --
--- As before, this doesn't prevent specific instances for e.g. 'Profunctor's,
+-- As before, this doesn't prevent specific instances for e.g. @Profunctor@s,
 -- but rather just defines what GHC will look for if there's not a
 -- more-specific instance.
 --
@@ -280,9 +283,7 @@ instance Category Attenuation where
 -- ('Data.Constraint.:-'), for some types that wouldn't be solved by any of the
 -- "real" instances.  In particular, this is useful for compositions of
 -- attenuations and for lifting attenuations across
--- 'Data.Functor.Contravariant.Contravariant's and 'Profunctor's.
---
--- Not all instances will be solved automatically by GHC
+-- 'Data.Functor.Contravariant.Contravariant's and @Profunctor@s.
 class Attenuable a b where
   attenuation :: Attenuation a b
   default attenuation :: Coercible a b => Attenuation a b
