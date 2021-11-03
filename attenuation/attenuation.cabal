@@ -37,6 +37,6 @@ library
   hs-source-dirs:
       src
   build-depends:
-      base >=4.12 && <4.16
+      base >=4.12 && <4.17
     , constraints >=0.10 && <0.14
   default-language: Haskell2010

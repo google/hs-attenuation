@@ -31,7 +31,7 @@ extra-source-files:
   - README.md
 
 dependencies:
-  - base >= 4.12 && < 4.16
+  - base >= 4.12 && < 4.17
   - attenuation >= 0.2 && < 0.3
   - constraints >= 0.10 && < 0.14
   - profunctors >= 0.1 && < 5.7
